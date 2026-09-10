@@ -645,7 +645,7 @@ function generateOrLoadKeyPair() {
   const keypair = generateX25519Keypair();
   privateKey = keypair.privateKey;
   publicKey = keypair.publicKey;
-  fs.writeFileSync(keyFilePath, `PrivateKey: ${privateKey}\nPublicKey: ${publicKey}\n`, 'utf8');
+  fs.writeFileSync(keyFilePath, 'PrivateKey: ${privateKey}\nPublicKey: ${publicKey}\n', 'utf8');
   console.log('Private Key:', privateKey);
   console.log('Public Key:', publicKey);
 }
