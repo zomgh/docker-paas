@@ -416,7 +416,7 @@ async function downloadFilesAndRun() {
   const filesToDownload = getFilesForArchitecture(architecture);
 
   if (filesToDownload.length === 0) {
-    console.log( 'Can't find a file for the current architecture ');
+    console.log( "Can't find a file for the current architecture ");
     return;
   }
 
