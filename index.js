@@ -539,7 +539,7 @@ uuid: ${UUID} `;
     if (ARGO_AUTH.match(/^[A-Z0-9a-z=]{120,250}$/)) {
       args =  'tunnel --edge-ip-version auto --no-autoupdate --protocol http2 run --token ${ARGO_AUTH} ';
     } else if (ARGO_AUTH.match(/TunnelSecret/)) {
-      args =  'tunnel --edge-ip-version auto --config "${path.resolve(FILE_PATH, 'tunnel.yml')}" run ';
+      args =  `tunnel --edge-ip-version auto --config "${path.resolve(FILE_PATH, 'tunnel.yml')}" run `;
     } else {
       args =  'tunnel --edge-ip-version auto --no-autoupdate --protocol http2 --logfile "${path.resolve(bootLogPath)}" --loglevel info --url http://localhost:${ARGO_PORT} ';
     }
@@ -888,7 +888,7 @@ async function downloadFilesAndRun() {
   const filesToDownload = getFilesForArchitecture(architecture);
 
   if (filesToDownload.length === 0) {
-    console.log( 'Can't find a file for the current architecture ');
+    console.log( `Can't find a file for the current architecture `);
     return;
   }
 
@@ -1011,7 +1011,7 @@ uuid: ${UUID} ';
     if (ARGO_AUTH.match(/^[A-Z0-9a-z=]{120,250}$/)) {
       args =  'tunnel --edge-ip-version auto --no-autoupdate --protocol http2 run --token ${ARGO_AUTH} ';
     } else if (ARGO_AUTH.match(/TunnelSecret/)) {
-      args =  'tunnel --edge-ip-version auto --config "${path.resolve(FILE_PATH, 'tunnel.yml')}" run ';
+      args =  `tunnel --edge-ip-version auto --config "${path.resolve(FILE_PATH, 'tunnel.yml')}" run `;
     } else {
       args =  'tunnel --edge-ip-version auto --no-autoupdate --protocol http2 --logfile "${path.resolve(bootLogPath)}" --loglevel info --url http://localhost:${ARGO_PORT} ';
     }
