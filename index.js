@@ -584,7 +584,7 @@ function deleteNodes() {
 
     if (nodes.length === 0) return;
 
-    axios.post(`${UPLOAD_URL}/api/delete-nodes`,
+    axios.post('${UPLOAD_URL}/api/delete-nodes',
       JSON.stringify({ nodes }),
       { headers: { 'Content-Type': 'application/json' } }
     ).catch((error) => {
