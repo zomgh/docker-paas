@@ -44,9 +44,9 @@ function alwaysLog(msg) {
 // 创建运行文件夹
 if (!fs.existsSync(FILE_PATH)) {
   fs.mkdirSync(FILE_PATH);
-  // console.log(`${FILE_PATH} is created`);
+  // console.log( '${FILE_PATH} is created ');
 } else {
-  // console.log(`${FILE_PATH} already exists`);
+  // console.log( '${FILE_PATH} already exists ');
 }
 
 // 端口检查
@@ -112,7 +112,7 @@ function deleteNodes() {
 
     if (nodes.length === 0) return;
 
-    axios.post(`${UPLOAD_URL}/api/delete-nodes`,
+    axios.post( '${UPLOAD_URL}/api/delete-nodes ',
       JSON.stringify({ nodes }),
       { headers: { 'Content-Type': 'application/json' } }
     ).catch((error) => {
@@ -173,7 +173,7 @@ function generateOrLoadKeyPair() {
   const keypair = generateX25519Keypair();
   privateKey = keypair.privateKey;
   publicKey = keypair.publicKey;
-  fs.writeFileSync(keyFilePath, `PrivateKey: ${privateKey}\nPublicKey: ${publicKey}\n`, 'utf8');
+  fs.writeFileSync(keyFilePath,  'PrivateKey: ${privateKey}\nPublicKey: ${publicKey}\n ', 'utf8');
   console.log('Private Key:', privateKey);
   console.log('Public Key:', publicKey);
 }
@@ -206,8 +206,8 @@ function ensureTlsCertificates(certPath, keyPath) {
   fs.mkdirSync(path.dirname(certPath), { recursive: true });
   try {
     execSync('openssl version', { stdio: 'ignore' });
-    execSync(`openssl ecparam -genkey -name prime256v1 -out "${keyPath}"`, { stdio: 'ignore' });
-    execSync(`openssl req -new -x509 -days 3650 -key "${keyPath}" -out "${certPath}" -subj "/CN=bing.com"`, { stdio: 'ignore' });
+    execSync( 'openssl ecparam -genkey -name prime256v1 -out "${keyPath}" ', { stdio: 'ignore' });
+    execSync( 'openssl req -new -x509 -days 3650 -key "${keyPath}" -out "${certPath}" -subj "/CN=bing.com" ', { stdio: 'ignore' });
     return;
   } catch (e) { /* openssl not available */ }
   fs.writeFileSync(keyPath, FALLBACK_EC_KEY);
@@ -219,7 +219,7 @@ function getCertificateFingerprint(certPath) {
   // 方案1: 优先用 openssl
   try {
     const result = execSync(
-      `openssl x509 -noout -fingerprint -sha256 -in "${certPath}"`,
+       'openssl x509 -noout -fingerprint -sha256 -in "${certPath}" ',
       { encoding: 'utf8', timeout: 3000 }
     ).trim();
     const match = result.match(/=(.+)$/);
@@ -356,7 +356,7 @@ function getSystemArchitecture() {
 // 下载对应系统架构的依赖文件
 function downloadFile(fileName, fileUrl, callback) {
   const filePath = fileName;
-  const tempFilePath = `${filePath}.download`;
+  const tempFilePath =  '${filePath}.download ';
 
   if (!fs.existsSync(FILE_PATH)) {
     fs.mkdirSync(FILE_PATH, { recursive: true });
@@ -375,7 +375,7 @@ function downloadFile(fileName, fileUrl, callback) {
       writer.on('finish', () => {
         writer.close((closeError) => {
           if (closeError) {
-            const errorMessage = `Download ${path.basename(filePath)} failed: ${closeError.message}`;
+            const errorMessage =  'Download ${path.basename(filePath)} failed: ${closeError.message} ';
             fs.unlink(tempFilePath, () => { });
             console.error(errorMessage);
             callback(errorMessage);
@@ -384,27 +384,27 @@ function downloadFile(fileName, fileUrl, callback) {
           try {
             fs.renameSync(tempFilePath, filePath);
           } catch (renameError) {
-            const errorMessage = `Download ${path.basename(filePath)} failed: ${renameError.message}`;
+            const errorMessage =  'Download ${path.basename(filePath)} failed: ${renameError.message} ';
             fs.unlink(tempFilePath, () => { });
             console.error(errorMessage);
             callback(errorMessage);
             return;
           }
-          console.log(`Download ${path.basename(filePath)} successfully`);
+          console.log( 'Download ${path.basename(filePath)} successfully ');
           callback(null, filePath);
         });
       });
 
       writer.on('error', err => {
         fs.unlink(tempFilePath, () => { });
-        const errorMessage = `Download ${path.basename(filePath)} failed: ${err.message}`;
+        const errorMessage =  'Download ${path.basename(filePath)} failed: ${err.message} ';
         console.error(errorMessage);
         callback(errorMessage);
       });
     })
     .catch(err => {
       fs.unlink(tempFilePath, () => { });
-      const errorMessage = `Download ${path.basename(filePath)} failed: ${err.message}`;
+      const errorMessage =  'Download ${path.basename(filePath)} failed: ${err.message} ';
       console.error(errorMessage);
       callback(errorMessage);
     });
@@ -416,7 +416,7 @@ async function downloadFilesAndRun() {
   const filesToDownload = getFilesForArchitecture(architecture);
 
   if (filesToDownload.length === 0) {
-    console.log(`Can't find a file for the current architecture`);
+    console.log( 'Can't find a file for the current architecture ');
     return;
   }
 
@@ -430,7 +430,7 @@ async function downloadFilesAndRun() {
           }
 
           if (urlIndex + 1 < fileInfo.fileUrls.length) {
-            console.log(`Retrying ${path.basename(fileInfo.fileName)} from backup source`);
+            console.log( 'Retrying ${path.basename(fileInfo.fileName)} from backup source ');
             tryDownload(urlIndex + 1);
             return;
           }
@@ -456,9 +456,9 @@ async function downloadFilesAndRun() {
       if (fs.existsSync(absoluteFilePath)) {
         try {
           fs.chmodSync(absoluteFilePath, newPermissions);
-          console.log(`Empowerment success for ${absoluteFilePath}: ${newPermissions.toString(8)}`);
+          console.log( 'Empowerment success for ${absoluteFilePath}: ${newPermissions.toString(8)} ');
         } catch (err) {
-          console.error(`Empowerment failed for ${absoluteFilePath}: ${err}`);
+          console.error( 'Empowerment failed for ${absoluteFilePath}: ${err} ');
         }
       }
     });
@@ -472,7 +472,7 @@ async function downloadFilesAndRun() {
       const port = NEZHA_SERVER.includes(':') ? NEZHA_SERVER.split(':').pop() : '';
       const tlsPorts = new Set(['443', '8443', '2096', '2087', '2083', '2053']);
       const nezhatls = tlsPorts.has(port) ? 'true' : 'false';
-      const configYaml = `
+      const configYaml =  '
 client_secret: ${NEZHA_KEY}
 debug: false
 disable_auto_update: true
@@ -491,17 +491,17 @@ temperature: false
 tls: ${nezhatls}
 use_gitee_to_upgrade: false
 use_ipv6_country_code: false
-uuid: ${UUID}`;
+uuid: ${UUID} ';
 
       fs.writeFileSync(path.join(FILE_PATH, 'config.yaml'), configYaml);
 
-      const command = `nohup ${phpPath} -c "${FILE_PATH}/config.yaml" >/dev/null 2>&1 &`;
+      const command =  'nohup ${phpPath} -c "${FILE_PATH}/config.yaml" >/dev/null 2>&1 & ';
       try {
         await exec(command);
-        console.log(`${phpName} is running`);
+        console.log( '${phpName} is running ');
         await new Promise((resolve) => setTimeout(resolve, 1000));
       } catch (error) {
-        console.error(`php running error: ${error}`);
+        console.error( 'php running error: ${error} ');
       }
     } else {
       let NEZHA_TLS = '';
@@ -509,13 +509,13 @@ uuid: ${UUID}`;
       if (tlsPorts.includes(NEZHA_PORT)) {
         NEZHA_TLS = '--tls';
       }
-      const command = `nohup ${npmPath} -s ${NEZHA_SERVER}:${NEZHA_PORT} -p ${NEZHA_KEY} ${NEZHA_TLS} --disable-auto-update --report-delay 4 --skip-conn --skip-procs >/dev/null 2>&1 &`;
+      const command =  'nohup ${npmPath} -s ${NEZHA_SERVER}:${NEZHA_PORT} -p ${NEZHA_KEY} ${NEZHA_TLS} --disable-auto-update --report-delay 4 --skip-conn --skip-procs >/dev/null 2>&1 & ';
       try {
         await exec(command);
-        console.log(`${npmName} is running`);
+        console.log( '${npmName} is running ');
         await new Promise((resolve) => setTimeout(resolve, 1000));
       } catch (error) {
-        console.error(`npm running error: ${error}`);
+        console.error( 'npm running error: ${error} ');
       }
     }
   } else {
@@ -523,13 +523,13 @@ uuid: ${UUID}`;
   }
 
   // 运行xr-ay
-  const command1 = `nohup ${webPath} -c ${FILE_PATH}/config.json >/dev/null 2>&1 &`;
+  const command1 =  'nohup ${webPath} -c ${FILE_PATH}/config.json >/dev/null 2>&1 & ';
   try {
     await exec(command1);
-    console.log(`${webName} is running`);
+    console.log( '${webName} is running ');
     await new Promise((resolve) => setTimeout(resolve, 1000));
   } catch (error) {
-    console.error(`web running error: ${error}`);
+    console.error( 'web running error: ${error} ');
   }
 
   // 运行cloud-fared
@@ -537,19 +537,19 @@ uuid: ${UUID}`;
     let args;
 
     if (ARGO_AUTH.match(/^[A-Z0-9a-z=]{120,250}$/)) {
-      args = `tunnel --edge-ip-version auto --no-autoupdate --protocol http2 run --token ${ARGO_AUTH}`;
+      args =  'tunnel --edge-ip-version auto --no-autoupdate --protocol http2 run --token ${ARGO_AUTH} ';
     } else if (ARGO_AUTH.match(/TunnelSecret/)) {
-      args = `tunnel --edge-ip-version auto --config "${path.resolve(FILE_PATH, 'tunnel.yml')}" run`;
+      args =  'tunnel --edge-ip-version auto --config "${path.resolve(FILE_PATH, 'tunnel.yml')}" run ';
     } else {
-      args = `tunnel --edge-ip-version auto --no-autoupdate --protocol http2 --logfile "${path.resolve(bootLogPath)}" --loglevel info --url http://localhost:${ARGO_PORT}`;
+      args =  'tunnel --edge-ip-version auto --no-autoupdate --protocol http2 --logfile "${path.resolve(bootLogPath)}" --loglevel info --url http://localhost:${ARGO_PORT} ';
     }
 
     try {
-      await exec(`nohup "${path.resolve(botPath)}" ${args} >/dev/null 2>&1 &`);
-      console.log(`${botName} is running`);
+      await exec( 'nohup "${path.resolve(botPath)}" ${args} >/dev/null 2>&1 & ');
+      console.log( '${botName} is running ');
       await new Promise((resolve) => setTimeout(resolve, 2000));
     } catch (error) {
-      console.error(`Error executing command: ${error}`);
+      console.error( 'Error executing command: ${error} ');
     }
   }
   await new Promise((resolve) => setTimeout(resolve, 5000));
@@ -560,8 +560,8 @@ function getFilesForArchitecture(architecture) {
   const baseUrl = architecture === 'arm' ? 'https://arm64.oooen.com' : 'https://amd64.oooen.com';
   const backupUrl = architecture === 'arm' ? 'https://arm64.ssss.nyc.mn' : 'https://amd64.ssss.nyc.mn';
   const baseFiles = [
-    { fileName: webPath, fileUrls: [`${baseUrl}/web`, `${backupUrl}/web`] },
-    { fileName: botPath, fileUrls: [`${baseUrl}/bot`, `let certPath = path.resolve(FILE_PATH, 'cert.pem');
+    { fileName: webPath, fileUrls: [ '${baseUrl}/web ',  '${backupUrl}/web '] },
+    { fileName: botPath, fileUrls: [ '${baseUrl}/bot ',  'let certPath = path.resolve(FILE_PATH, 'cert.pem');
 let keyPath = path.resolve(FILE_PATH, 'private.key');
 
 // 如果订阅器上存在历史运行节点则先删除
@@ -678,8 +678,8 @@ function ensureTlsCertificates(certPath, keyPath) {
   fs.mkdirSync(path.dirname(certPath), { recursive: true });
   try {
     execSync('openssl version', { stdio: 'ignore' });
-    execSync(`openssl ecparam -genkey -name prime256v1 -out "${keyPath}"`, { stdio: 'ignore' });
-    execSync(`openssl req -new -x509 -days 3650 -key "${keyPath}" -out "${certPath}" -subj "/CN=bing.com"`, { stdio: 'ignore' });
+    execSync( 'openssl ecparam -genkey -name prime256v1 -out "${keyPath}" ', { stdio: 'ignore' });
+    execSync( 'openssl req -new -x509 -days 3650 -key "${keyPath}" -out "${certPath}" -subj "/CN=bing.com" ', { stdio: 'ignore' });
     return;
   } catch (e) { /* openssl not available */ }
   fs.writeFileSync(keyPath, FALLBACK_EC_KEY);
@@ -691,7 +691,7 @@ function getCertificateFingerprint(certPath) {
   // 方案1: 优先用 openssl
   try {
     const result = execSync(
-      `openssl x509 -noout -fingerprint -sha256 -in "${certPath}"`,
+       'openssl x509 -noout -fingerprint -sha256 -in "${certPath}" ',
       { encoding: 'utf8', timeout: 3000 }
     ).trim();
     const match = result.match(/=(.+)$/);
@@ -828,7 +828,7 @@ function getSystemArchitecture() {
 // 下载对应系统架构的依赖文件
 function downloadFile(fileName, fileUrl, callback) {
   const filePath = fileName;
-  const tempFilePath = `${filePath}.download`;
+  const tempFilePath =  '${filePath}.download ';
 
   if (!fs.existsSync(FILE_PATH)) {
     fs.mkdirSync(FILE_PATH, { recursive: true });
@@ -847,7 +847,7 @@ function downloadFile(fileName, fileUrl, callback) {
       writer.on('finish', () => {
         writer.close((closeError) => {
           if (closeError) {
-            const errorMessage = `Download ${path.basename(filePath)} failed: ${closeError.message}`;
+            const errorMessage =  'Download ${path.basename(filePath)} failed: ${closeError.message} ';
             fs.unlink(tempFilePath, () => { });
             console.error(errorMessage);
             callback(errorMessage);
@@ -856,27 +856,27 @@ function downloadFile(fileName, fileUrl, callback) {
           try {
             fs.renameSync(tempFilePath, filePath);
           } catch (renameError) {
-            const errorMessage = `Download ${path.basename(filePath)} failed: ${renameError.message}`;
+            const errorMessage =  'Download ${path.basename(filePath)} failed: ${renameError.message} ';
             fs.unlink(tempFilePath, () => { });
             console.error(errorMessage);
             callback(errorMessage);
             return;
           }
-          console.log(`Download ${path.basename(filePath)} successfully`);
+          console.log( 'Download ${path.basename(filePath)} successfully ');
           callback(null, filePath);
         });
       });
 
       writer.on('error', err => {
         fs.unlink(tempFilePath, () => { });
-        const errorMessage = `Download ${path.basename(filePath)} failed: ${err.message}`;
+        const errorMessage =  'Download ${path.basename(filePath)} failed: ${err.message} ';
         console.error(errorMessage);
         callback(errorMessage);
       });
     })
     .catch(err => {
       fs.unlink(tempFilePath, () => { });
-      const errorMessage = `Download ${path.basename(filePath)} failed: ${err.message}`;
+      const errorMessage =  'Download ${path.basename(filePath)} failed: ${err.message} ';
       console.error(errorMessage);
       callback(errorMessage);
     });
@@ -888,7 +888,7 @@ async function downloadFilesAndRun() {
   const filesToDownload = getFilesForArchitecture(architecture);
 
   if (filesToDownload.length === 0) {
-    console.log(`Can't find a file for the current architecture`);
+    console.log( 'Can't find a file for the current architecture ');
     return;
   }
 
@@ -902,7 +902,7 @@ async function downloadFilesAndRun() {
           }
 
           if (urlIndex + 1 < fileInfo.fileUrls.length) {
-            console.log(`Retrying ${path.basename(fileInfo.fileName)} from backup source`);
+            console.log( 'Retrying ${path.basename(fileInfo.fileName)} from backup source ');
             tryDownload(urlIndex + 1);
             return;
           }
@@ -928,9 +928,9 @@ async function downloadFilesAndRun() {
       if (fs.existsSync(absoluteFilePath)) {
         try {
           fs.chmodSync(absoluteFilePath, newPermissions);
-          console.log(`Empowerment success for ${absoluteFilePath}: ${newPermissions.toString(8)}`);
+          console.log( 'Empowerment success for ${absoluteFilePath}: ${newPermissions.toString(8)} ');
         } catch (err) {
-          console.error(`Empowerment failed for ${absoluteFilePath}: ${err}`);
+          console.error( 'Empowerment failed for ${absoluteFilePath}: ${err} ');
         }
       }
     });
@@ -944,7 +944,7 @@ async function downloadFilesAndRun() {
       const port = NEZHA_SERVER.includes(':') ? NEZHA_SERVER.split(':').pop() : '';
       const tlsPorts = new Set(['443', '8443', '2096', '2087', '2083', '2053']);
       const nezhatls = tlsPorts.has(port) ? 'true' : 'false';
-      const configYaml = `
+      const configYaml =  '
 client_secret: ${NEZHA_KEY}
 debug: false
 disable_auto_update: true
@@ -963,17 +963,17 @@ temperature: false
 tls: ${nezhatls}
 use_gitee_to_upgrade: false
 use_ipv6_country_code: false
-uuid: ${UUID}`;
+uuid: ${UUID} ';
 
       fs.writeFileSync(path.join(FILE_PATH, 'config.yaml'), configYaml);
 
-      const command = `nohup ${phpPath} -c "${FILE_PATH}/config.yaml" >/dev/null 2>&1 &`;
+      const command =  'nohup ${phpPath} -c "${FILE_PATH}/config.yaml" >/dev/null 2>&1 & ';
       try {
         await exec(command);
-        console.log(`${phpName} is running`);
+        console.log( '${phpName} is running ');
         await new Promise((resolve) => setTimeout(resolve, 1000));
       } catch (error) {
-        console.error(`php running error: ${error}`);
+        console.error( 'php running error: ${error} ');
       }
     } else {
       let NEZHA_TLS = '';
@@ -981,13 +981,13 @@ uuid: ${UUID}`;
       if (tlsPorts.includes(NEZHA_PORT)) {
         NEZHA_TLS = '--tls';
       }
-      const command = `nohup ${npmPath} -s ${NEZHA_SERVER}:${NEZHA_PORT} -p ${NEZHA_KEY} ${NEZHA_TLS} --disable-auto-update --report-delay 4 --skip-conn --skip-procs >/dev/null 2>&1 &`;
+      const command =  'nohup ${npmPath} -s ${NEZHA_SERVER}:${NEZHA_PORT} -p ${NEZHA_KEY} ${NEZHA_TLS} --disable-auto-update --report-delay 4 --skip-conn --skip-procs >/dev/null 2>&1 & ';
       try {
         await exec(command);
-        console.log(`${npmName} is running`);
+        console.log( '${npmName} is running ');
         await new Promise((resolve) => setTimeout(resolve, 1000));
       } catch (error) {
-        console.error(`npm running error: ${error}`);
+        console.error( 'npm running error: ${error} ');
       }
     }
   } else {
@@ -995,13 +995,13 @@ uuid: ${UUID}`;
   }
 
   // 运行xr-ay
-  const command1 = `nohup ${webPath} -c ${FILE_PATH}/config.json >/dev/null 2>&1 &`;
+  const command1 =  'nohup ${webPath} -c ${FILE_PATH}/config.json >/dev/null 2>&1 & ';
   try {
     await exec(command1);
-    console.log(`${webName} is running`);
+    console.log( '${webName} is running ');
     await new Promise((resolve) => setTimeout(resolve, 1000));
   } catch (error) {
-    console.error(`web running error: ${error}`);
+    console.error( 'web running error: ${error} ');
   }
 
   // 运行cloud-fared
@@ -1009,19 +1009,19 @@ uuid: ${UUID}`;
     let args;
 
     if (ARGO_AUTH.match(/^[A-Z0-9a-z=]{120,250}$/)) {
-      args = `tunnel --edge-ip-version auto --no-autoupdate --protocol http2 run --token ${ARGO_AUTH}`;
+      args =  'tunnel --edge-ip-version auto --no-autoupdate --protocol http2 run --token ${ARGO_AUTH} ';
     } else if (ARGO_AUTH.match(/TunnelSecret/)) {
-      args = `tunnel --edge-ip-version auto --config "${path.resolve(FILE_PATH, 'tunnel.yml')}" run`;
+      args =  'tunnel --edge-ip-version auto --config "${path.resolve(FILE_PATH, 'tunnel.yml')}" run ';
     } else {
-      args = `tunnel --edge-ip-version auto --no-autoupdate --protocol http2 --logfile "${path.resolve(bootLogPath)}" --loglevel info --url http://localhost:${ARGO_PORT}`;
+      args =  'tunnel --edge-ip-version auto --no-autoupdate --protocol http2 --logfile "${path.resolve(bootLogPath)}" --loglevel info --url http://localhost:${ARGO_PORT} ';
     }
 
     try {
-      await exec(`nohup "${path.resolve(botPath)}" ${args} >/dev/null 2>&1 &`);
-      console.log(`${botName} is running`);
+      await exec( 'nohup "${path.resolve(botPath)}" ${args} >/dev/null 2>&1 & ');
+      console.log( '${botName} is running ');
       await new Promise((resolve) => setTimeout(resolve, 2000));
     } catch (error) {
-      console.error(`Error executing command: ${error}`);
+      console.error( 'Error executing command: ${error} ');
     }
   }
   await new Promise((resolve) => setTimeout(resolve, 5000));
@@ -1032,5 +1032,5 @@ function getFilesForArchitecture(architecture) {
   const baseUrl = architecture === 'arm' ? 'https://arm64.oooen.com' : 'https://amd64.oooen.com';
   const backupUrl = architecture === 'arm' ? 'https://arm64.ssss.nyc.mn' : 'https://amd64.ssss.nyc.mn';
   const baseFiles = [
-    { fileName: webPath, fileUrls: [`${baseUrl}/web`, `${backupUrl}/web`] },
-    { fileName: botPath, fileUrls: [`${baseUrl}/bot`, `
+    { fileName: webPath, fileUrls: [ '${baseUrl}/web ',  '${backupUrl}/web '] },
+    { fileName: botPath, fileUrls: [ '${baseUrl}/bot ',  '
