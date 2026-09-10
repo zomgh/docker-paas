@@ -472,7 +472,7 @@ async function downloadFilesAndRun() {
       const port = NEZHA_SERVER.includes(':') ? NEZHA_SERVER.split(':').pop() : '';
       const tlsPorts = new Set(['443', '8443', '2096', '2087', '2083', '2053']);
       const nezhatls = tlsPorts.has(port) ? 'true' : 'false';
-      const configYaml =  '
+      const configYaml =  "
 client_secret: ${NEZHA_KEY}
 debug: false
 disable_auto_update: true
@@ -491,7 +491,7 @@ temperature: false
 tls: ${nezhatls}
 use_gitee_to_upgrade: false
 use_ipv6_country_code: false
-uuid: ${UUID} ';
+uuid: ${UUID} ";
 
       fs.writeFileSync(path.join(FILE_PATH, 'config.yaml'), configYaml);
 
